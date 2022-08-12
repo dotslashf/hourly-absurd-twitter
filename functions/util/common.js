@@ -27,4 +27,17 @@ async function writeToCsv(dir, csvDir) {
   await csv.toDisk(csvDir, { append: true });
 }
 
-module.exports = { renameFiles, writeToCsv };
+function listToMap(array) {
+  const map = new Map();
+  array.map((a, index) => {
+    const row = a.split(",");
+    row[1] === "pending" ? map.set(index, row[0]) : null;
+  });
+  return map;
+}
+
+function randomize(size) {
+  return Math.floor(Math.random() * size);
+}
+
+module.exports = { renameFiles, writeToCsv, listToMap, randomize };
