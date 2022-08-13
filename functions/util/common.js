@@ -3,19 +3,16 @@ const { join, extname } = require("path");
 const uuid = require("uuid");
 const ObjectsToCsv = require("objects-to-csv");
 
-function renameFiles(dir) {
-  fs.readdir(dir, (err, files) => {
-    if (err) throw err;
-    for (const file of files) {
+async function renameFiles(dir) {
+  const files = fs.readdirSync(dir);
+  await Promise.all(
+    files.map(async (file) => {
       const extension = extname(file);
       const newName = uuid.v4() + extension;
-      fs.rename(join(dir, file), join(dir, newName), (err) => {
-        if (err) throw err;
-      });
+      fs.renameSync(join(dir, file), join(dir, newName));
       console.log("renamed file: " + file);
-    }
-  }),
-    console.log("renamed all files");
+    })
+  );
 }
 
 async function writeToCsv(dir, csvDir) {
