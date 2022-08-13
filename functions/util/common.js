@@ -21,7 +21,7 @@ function renameFiles(dir) {
 async function writeToCsv(dir, csvDir) {
   const files = fs.readdirSync(dir);
   const fileAndStatus = files.map((file) => {
-    return { file, status: "pending" };
+    return { id: file, status: "pending" };
   });
   const csv = new ObjectsToCsv(fileAndStatus);
   await csv.toDisk(csvDir, { append: true });
@@ -29,15 +29,30 @@ async function writeToCsv(dir, csvDir) {
 
 function listToMap(array) {
   const map = new Map();
-  array.map((a, index) => {
-    const row = a.split(",");
-    row[1] === "pending" ? map.set(index, row[0]) : null;
-  });
+  array
+    .filter((a) => a.status === "pending")
+    .map((a, index) => map.set(index, a.id));
   return map;
+}
+
+/**
+ * @param {Array} array
+ * @param {string} id
+ * @returns
+ */
+function updateArrayStatus(array, id) {
+  const n = array.findIndex((a) => a.id === id);
+  array[n].status = "success";
 }
 
 function randomize(size) {
   return Math.floor(Math.random() * size);
 }
 
-module.exports = { renameFiles, writeToCsv, listToMap, randomize };
+module.exports = {
+  renameFiles,
+  writeToCsv,
+  listToMap,
+  randomize,
+  updateArrayStatus,
+};
