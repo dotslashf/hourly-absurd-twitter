@@ -35,11 +35,10 @@ class Twitter {
           segment_index: this.chunkNumber,
         });
 
-        console.log(`uploading chunk number: ${this.chunkNumber}`);
         this.chunkNumber++;
         mediaData.resume();
         if (this.isUploadComplete()) {
-          console.log("finish");
+          console.log("upload finish");
           resolve(await this.finalizeUpload(mediaIdTemp));
         }
       });
