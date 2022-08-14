@@ -21,7 +21,7 @@ class Twitter {
     const fileLength = buffer.byteLength;
     const mediaIdTemp = await this.initMediaUpload(mediaType, fileLength);
 
-    const mediaData = toStream(buffer, 128 * 1024);
+    const mediaData = toStream(buffer, 512 * 1024);
 
     return new Promise((resolve) => {
       mediaData.on("data", async (chunk) => {
@@ -119,13 +119,8 @@ class Twitter {
       command: "STATUS",
       media_id: mediaIdStr,
     });
-
-    console.log(response);
-
     const state = response.processing_info.state;
-
     await new Promise((resolve) => setTimeout(resolve, 3000));
-
     return state;
   }
 
