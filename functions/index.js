@@ -12,11 +12,12 @@ exports.tweet = functions.pubsub.schedule("0 * * * *").onRun(async () => {
   const filesMap = listToMap(result);
   const randomIndex = randomize(filesMap.size);
   const fileName = filesMap.get(randomIndex);
+  console.log(`selected video ${fileName}`);
   const video = await storage.getVideoFile(fileName);
 
   const mediaId = await client.uploadMedia(video.buffer, video.type);
   await client.tweetMedia("", mediaId);
   updateArrayStatus(result, fileName);
   storage.updateCsvFile(result);
-  console.log("tweeted", fileName);
+  console.log("tweeted");
 });
