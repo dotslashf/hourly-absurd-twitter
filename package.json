@@ -1,1 +1,7 @@
-{}
+{
+  "name": "hourly_absurd",
+  "description": "Hourly absurd",
+  "scripts": {
+    "rename": "node ./functions/util/rename.js"
+  }
+}
