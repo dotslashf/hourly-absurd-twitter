@@ -66,4 +66,6 @@ node_modules/
 .env
 
 videos/*
+videos-submission/*
 list.csv
+list-submission.csv
