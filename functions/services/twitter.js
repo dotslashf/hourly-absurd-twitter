@@ -21,7 +21,7 @@ class Twitter {
     const fileLength = buffer.byteLength;
     const mediaIdTemp = await this.initMediaUpload(mediaType, fileLength);
 
-    const mediaData = toStream(buffer, 512 * 1024);
+    const mediaData = toStream(buffer, 1024 * 1024);
 
     return new Promise((resolve) => {
       mediaData.on("data", async (chunk) => {
@@ -35,6 +35,7 @@ class Twitter {
           segment_index: this.chunkNumber,
         });
 
+        console.log(`uploaded chunk ${this.chunkNumber}`);
         this.chunkNumber++;
         mediaData.resume();
         if (this.isUploadComplete()) {
