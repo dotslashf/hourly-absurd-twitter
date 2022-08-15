@@ -8,7 +8,7 @@ const storage = new Storage("gs://twitter-absurd-humor.appspot.com/");
 exports.tweet = functions.pubsub.schedule("0 * * * *").onRun(async () => {
   const client = new Twitter();
 
-  const result = await storage.getCsvFiles();
+  const result = await storage.getCsvFiles("list.csv");
   const filesMap = listToMap(result);
   const randomIndex = randomize(filesMap.size);
   const fileName = filesMap.get(randomIndex);
@@ -18,6 +18,6 @@ exports.tweet = functions.pubsub.schedule("0 * * * *").onRun(async () => {
   const mediaId = await client.uploadMedia(video.buffer, video.type);
   await client.tweetMedia("", mediaId);
   updateArrayStatus(result, fileName);
-  storage.updateCsvFile(result);
+  storage.updateCsvFile(result, "list.csv");
   console.log("tweeted");
 });
