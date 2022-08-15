@@ -10,8 +10,12 @@ class Storage {
     this.storage = getStorage();
   }
 
-  async getCsvFiles() {
-    const csvFile = this.storage.bucket().file("list.csv");
+  /**
+   * @param {string} fileName
+   * @returns
+   */
+  async getCsvFiles(fileName) {
+    const csvFile = this.storage.bucket().file(fileName);
     const buffer = (await csvFile.download())[0];
     const files = buffer.toString().split("\n");
     files.splice(0, 1);
@@ -29,8 +33,12 @@ class Storage {
     };
   }
 
-  async updateCsvFile(array) {
-    const csvFile = this.storage.bucket().file("list.csv");
+  /**
+   * @param {string[]} array
+   * @param {string} fileName
+   */
+  async updateCsvFile(array, fileName) {
+    const csvFile = this.storage.bucket().file(fileName);
     const csv = new ObjectsToCsv(array);
     await csvFile.save(Buffer.from(await csv.toString()), {
       metadata: {
