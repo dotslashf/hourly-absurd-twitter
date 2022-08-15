@@ -2,6 +2,7 @@ const fs = require("fs");
 const { join, extname } = require("path");
 const uuid = require("uuid");
 const ObjectsToCsv = require("objects-to-csv");
+const SUBMISSION_HOURS = [8, 12, 16, 20];
 
 async function renameFiles(dir) {
   const files = fs.readdirSync(dir);
@@ -46,10 +47,17 @@ function randomize(size) {
   return Math.floor(Math.random() * size);
 }
 
+function isItSubmissionTime() {
+  const date = new Date();
+  const hour = date.getHours();
+  return SUBMISSION_HOURS.includes(hour);
+}
+
 module.exports = {
   renameFiles,
   writeToCsv,
   listToMap,
   randomize,
   updateArrayStatus,
+  isItSubmissionTime,
 };
