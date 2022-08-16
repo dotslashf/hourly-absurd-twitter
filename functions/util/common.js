@@ -2,6 +2,9 @@ const fs = require("fs");
 const { join, extname } = require("path");
 const uuid = require("uuid");
 const ObjectsToCsv = require("objects-to-csv");
+const toStream = require("buffer-to-stream");
+const { Readable } = require("stream");
+
 const SUBMISSION_HOURS = [8, 12, 16, 20];
 
 async function renameFiles(dir) {
@@ -40,7 +43,7 @@ function listToMap(array) {
  */
 function updateArrayStatus(array, id) {
   const n = array.findIndex((a) => a.id === id);
-  array[n].status = "success";
+  array[n].status = new Date();
 }
 
 function randomize(size) {

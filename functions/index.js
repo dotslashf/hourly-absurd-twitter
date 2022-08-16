@@ -12,36 +12,38 @@ const storage = new Storage("gs://twitter-absurd-humor.appspot.com/");
 const client = new Twitter();
 
 exports.tweet = functions.pubsub.schedule("0 * * * *").onRun(async () => {
+  const path = {
+    folderVideos: "videos/",
+    csvFileName: "list.csv",
+  };
   let result = [];
-  let folderVideos = "";
-  let csvFileName = "";
+  const isItSubmissionHour = isItSubmissionTime();
 
-  if (isItSubmissionTime()) {
-    csvFileName = process.env.LIST_VIDEOS_SUBMISSION;
-    folderVideos = process.env.VIDEOS_SUBMISSION_FOLDER_PATH;
-  } else {
-    csvFileName = process.env.LIST_VIDEOS_DEFAULT;
-    folderVideos = process.env.VIDEOS_FOLDER_PATH;
+  if (isItSubmissionHour) {
+    path.folderVideos = "videos-submission/";
+    path.csvFileName = "list-submission.csv";
+    console.log("Submission time!", new Date().getHours());
   }
 
   result = await storage.getCsvFiles(csvFileName);
   let filesMap = listToMap(result);
 
-  if (filesMap.size === 0 && isItSubmissionTime()) {
-    csvFileName = process.env.LIST_VIDEOS_DEFAULT;
-    folderVideos = process.env.VIDEOS_FOLDER_PATH;
+  if (filesMap.size === 0 && isItSubmissionHour) {
+    path.folderVideos = "videos/";
+    path.csvFileName = "list.csv";
     result = await storage.getCsvFiles(csvFileName);
     filesMap = listToMap(result);
   }
 
   const randomIndex = randomize(filesMap.size);
   const fileName = filesMap.get(randomIndex);
-  console.log(`selected video ${fileName}`);
-  const video = await storage.getVideoFile(`${folderVideos}${fileName}`);
+  console.log(`selected video ${folderVideos}${fileName}`);
 
+  const video = await storage.getVideoFile(`${folderVideos}${fileName}`);
   const mediaId = await client.uploadMedia(video.buffer, video.type);
   await client.tweetMedia("", mediaId);
+
   updateArrayStatus(result, fileName);
   storage.updateCsvFile(result, csvFileName);
-  console.log(`tweeted, isItSubmissionTime: ${isItSubmissionTime()}`);
+  console.log(`tweet ✅`);
 });
