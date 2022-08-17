@@ -1,6 +1,5 @@
 const twitter = require("twitter");
-const fs = require("fs");
-const toStream = require("buffer-to-stream");
+const { convertBuffer } = require("../util/common");
 require("dotenv").config();
 
 class Twitter {
@@ -21,7 +20,7 @@ class Twitter {
     const fileLength = buffer.byteLength;
     const mediaIdTemp = await this.initMediaUpload(mediaType, fileLength);
 
-    const mediaData = toStream(buffer, 1024 * 1024);
+    const mediaData = convertBuffer(buffer, 1024 * 1024 * 2);
 
     return new Promise((resolve) => {
       mediaData.on("data", async (chunk) => {
@@ -60,7 +59,7 @@ class Twitter {
           media_type: mediaType,
           media_category: "tweet_video",
         },
-        (error, media, response) => {
+        (error, media, _) => {
           if (error) {
             reject(error);
           } else {
