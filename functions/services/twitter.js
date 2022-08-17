@@ -10,9 +10,7 @@ class Twitter {
       access_token_key: process.env.TWITTER_ACCESS_TOKEN,
       access_token_secret: process.env.TWITTER_ACCESS_SECRET,
     });
-    this.isUploading = false;
     this.chunkNumber = 0;
-    this.isFileStreamEnded = false;
     this.totalByte = 0;
   }
 
@@ -25,7 +23,6 @@ class Twitter {
     return new Promise((resolve) => {
       mediaData.on("data", async (chunk) => {
         mediaData.pause();
-        this.isUploading = true;
 
         await this.client.post("media/upload", {
           command: "APPEND",
@@ -37,14 +34,11 @@ class Twitter {
         console.log(`uploaded chunk ${this.chunkNumber}`);
         this.chunkNumber++;
         mediaData.resume();
-        if (this.isUploadComplete()) {
-          console.log("upload finish");
-          resolve(await this.finalizeUpload(mediaIdTemp));
-        }
       });
 
       mediaData.on("end", async () => {
-        this.isFileStreamEnded = true;
+        console.log("upload finish");
+        resolve(await this.finalizeUpload(mediaIdTemp));
       });
     });
   }
@@ -122,10 +116,6 @@ class Twitter {
     const state = response.processing_info.state;
     await new Promise((resolve) => setTimeout(resolve, 3000));
     return state;
-  }
-
-  isUploadComplete() {
-    return this.isUploading && this.isFileStreamEnded;
   }
 
   async tweetText(text) {
