@@ -26,7 +26,7 @@ class Storage {
   }
 
   async getVideoFile(fileName) {
-    const file = this.storage.bucket().file(`videos/${fileName}`);
+    const file = this.storage.bucket().file(`${fileName}`);
     return {
       buffer: (await file.download())[0],
       type: file.metadata.contentType,

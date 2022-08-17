@@ -2,6 +2,10 @@ const fs = require("fs");
 const { join, extname } = require("path");
 const uuid = require("uuid");
 const ObjectsToCsv = require("objects-to-csv");
+const toStream = require("buffer-to-stream");
+const { Readable } = require("stream");
+
+const SUBMISSION_HOURS = [8, 12, 16, 20];
 
 async function renameFiles(dir) {
   const files = fs.readdirSync(dir);
@@ -39,11 +43,45 @@ function listToMap(array) {
  */
 function updateArrayStatus(array, id) {
   const n = array.findIndex((a) => a.id === id);
-  array[n].status = "success";
+  array[n].status = new Date();
 }
 
 function randomize(size) {
   return Math.floor(Math.random() * size);
+}
+
+function isItSubmissionTime() {
+  const date = new Date();
+  const hour = date.getHours();
+  return SUBMISSION_HOURS.includes(hour);
+}
+
+function convertBuffer(buf, chunkSize) {
+  if (typeof buf === "string") {
+    buf = Buffer.from(buf, "utf8");
+  }
+  if (!Buffer.isBuffer(buf)) {
+    throw new TypeError(
+      `"buf" argument must be a string or an instance of Buffer`
+    );
+  }
+
+  const reader = new Readable();
+
+  const len = buf.length;
+  let start = 0;
+
+  // Overwrite _read method to push data from buffer.
+  reader._read = function () {
+    while (reader.push(buf.slice(start, (start += chunkSize)))) {
+      // If all data pushed, just break the loop.
+      if (start >= len) {
+        reader.push(null);
+        break;
+      }
+    }
+  };
+  return reader;
 }
 
 module.exports = {
@@ -52,4 +90,6 @@ module.exports = {
   listToMap,
   randomize,
   updateArrayStatus,
+  isItSubmissionTime,
+  convertBuffer,
 };
