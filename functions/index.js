@@ -39,11 +39,19 @@ exports.tweet = functions.pubsub.schedule("0 * * * *").onRun(async () => {
   const fileName = filesMap.get(randomIndex);
   console.log(`selected video ${path.folderVideos}${fileName}`);
 
-  const video = await storage.getVideoFile(`${path.folderVideos}${fileName}`);
-  const mediaId = await client.uploadMedia(video.buffer, video.type);
-  await client.tweetMedia("", mediaId);
-
-  updateArrayStatus(result, fileName);
-  storage.updateCsvFile(result, path.csvFileName);
-  console.log(`tweet ✅`);
+  try {
+    const video = await storage.getVideoFile(`${path.folderVideos}${fileName}`);
+    const mediaId = await client.uploadMedia(video.buffer, video.type);
+    await client.tweetMedia("", mediaId);
+  } catch (error) {
+    console.log(error);
+    //retry
+    const video = await storage.getVideoFile(`${path.folderVideos}${fileName}`);
+    const mediaId = await client.uploadMedia(video.buffer, video.type);
+    await client.tweetMedia("", mediaId);
+  } finally {
+    updateArrayStatus(result, fileName);
+    storage.updateCsvFile(result, path.csvFileName);
+    console.log(`tweet ✅`);
+  }
 });
