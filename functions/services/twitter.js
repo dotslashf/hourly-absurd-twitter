@@ -114,6 +114,10 @@ class Twitter {
       media_id: mediaIdStr,
     });
     const state = response.processing_info.state;
+    if (state === "failed") {
+      console.log(`error: ${response.processing_info.error}`);
+      throw new Error(response.processing_info.error.message);
+    }
     await new Promise((resolve) => setTimeout(resolve, 3000));
     return state;
   }
