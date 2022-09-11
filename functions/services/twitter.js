@@ -90,17 +90,19 @@ class Twitter {
             reject(error);
           } else {
             let mediaStatus = await this.getMediaStatus(mediaIdStr);
-
-            while (mediaStatus !== "succeeded" || mediaStatus !== "failed") {
-              mediaStatus = await this.getMediaStatus(mediaIdStr);
-              if (mediaStatus === "succeeded") {
-                resolve(mediaIdStr);
-                break;
-              }
-              if (mediaStatus === "failed") {
-                reject(new Error("failed"));
-                break;
-              }
+            try {
+              while (mediaStatus !== "succeeded" || mediaStatus !== "failed") {
+                mediaStatus = await this.getMediaStatus(mediaIdStr);
+                if (mediaStatus === "succeeded") {
+                  resolve(mediaIdStr);
+                  break;
+                }
+                if (mediaStatus === "failed") {
+                  break;
+                }
+              } 
+            } catch (error) {
+              throw new Error(error);
             }
           }
         }
@@ -115,7 +117,7 @@ class Twitter {
     });
     const state = response.processing_info.state;
     if (state === "failed") {
-      console.log(`error: ${response.processing_info.error}`);
+      console.log(`error: ${response.processing_info.error.message}`);
       throw new Error(response.processing_info.error.message);
     }
     await new Promise((resolve) => setTimeout(resolve, 3000));

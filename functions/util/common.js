@@ -41,9 +41,9 @@ function listToMap(array) {
  * @param {string} id
  * @returns
  */
-function updateArrayStatus(array, id) {
+function updateArrayStatus(array, id, status = new Date()) {
   const n = array.findIndex((a) => a.id === id);
-  array[n].status = new Date();
+  array[n].status = status;
 }
 
 function randomize(size) {

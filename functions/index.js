@@ -43,15 +43,12 @@ exports.tweet = functions.pubsub.schedule("0 * * * *").onRun(async () => {
     const video = await storage.getVideoFile(`${path.folderVideos}${fileName}`);
     const mediaId = await client.uploadMedia(video.buffer, video.type);
     await client.tweetMedia("", mediaId);
-  } catch (error) {
-    console.log(error);
-    //retry
-    const video = await storage.getVideoFile(`${path.folderVideos}${fileName}`);
-    const mediaId = await client.uploadMedia(video.buffer, video.type);
-    await client.tweetMedia("", mediaId);
-  } finally {
+
     updateArrayStatus(result, fileName);
     storage.updateCsvFile(result, path.csvFileName);
-    console.log(`tweet ✅`);
+    console.log(`tweeted ✅`);
+  } catch (error) {
+    console.log("from catch", error);
+    updateArrayStatus(result, fileName, "error");
   }
 });
