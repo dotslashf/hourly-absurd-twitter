@@ -20,7 +20,7 @@ class Twitter {
 
     const mediaData = convertBuffer(buffer, 1024 * 1024 * 2);
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       mediaData.on("data", async (chunk) => {
         mediaData.pause();
 
@@ -38,7 +38,11 @@ class Twitter {
 
       mediaData.on("end", async () => {
         console.log("upload finish");
-        resolve(await this.finalizeUpload(mediaIdTemp));
+        try {
+          resolve(await this.finalizeUpload(mediaIdTemp));
+        } catch (error) {
+          reject(error);
+        }
       });
     });
   }
@@ -102,7 +106,7 @@ class Twitter {
                 }
               } 
             } catch (error) {
-              throw new Error(error);
+              reject(error);
             }
           }
         }
