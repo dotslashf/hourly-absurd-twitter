@@ -37,7 +37,7 @@ exports.tweet = functions.pubsub.schedule("0 * * * *").onRun(async () => {
 
   const randomIndex = randomize(filesMap.size);
   const fileName = filesMap.get(randomIndex);
-  console.log(`selected video ${path.folderVideos}${fileName}`);
+  console.log(`selected ${path.folderVideos}${fileName}`);
 
   try {
     const video = await storage.getVideoFile(`${path.folderVideos}${fileName}`);
