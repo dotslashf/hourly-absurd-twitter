@@ -5,7 +5,7 @@ const ObjectsToCsv = require("objects-to-csv");
 const toStream = require("buffer-to-stream");
 const { Readable } = require("stream");
 
-const SUBMISSION_HOURS = [8, 12, 16, 20];
+const SUBMISSION_HOURS = [1, 3, 5, 8, 11, 13];
 
 async function renameFiles(dir) {
   const files = fs.readdirSync(dir);
@@ -50,10 +50,10 @@ function randomize(size) {
   return Math.floor(Math.random() * size);
 }
 
-function isItSubmissionTime() {
+function isItSubmissionTime(submissionTime = SUBMISSION_HOURS) {
   const date = new Date();
   const hour = date.getHours();
-  return SUBMISSION_HOURS.includes(hour);
+  return submissionTime.includes(hour);
 }
 
 function convertBuffer(buf, chunkSize) {
