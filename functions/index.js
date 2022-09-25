@@ -45,10 +45,10 @@ exports.tweet = functions.pubsub.schedule("0 * * * *").onRun(async () => {
     await client.tweetMedia("", mediaId);
 
     updateArrayStatus(result, fileName);
-    storage.updateCsvFile(result, path.csvFileName);
     console.log(`tweeted ✅`);
   } catch (error) {
-    console.log("from catch", error);
     updateArrayStatus(result, fileName, "error");
+    console.log("from catch", error);
   }
+  storage.updateCsvFile(result, path.csvFileName);
 });
