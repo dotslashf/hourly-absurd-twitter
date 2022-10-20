@@ -53,7 +53,7 @@ exports.tweet = functions.pubsub.schedule("0 * * * *").onRun(async () => {
   storage.updateCsvFile(result, path.csvFileName);
 });
 
-exports.updateUsername = functions.pubsub.schedule("*/10 * * * *").onRun(async () => {
+exports.updateUsername = functions.pubsub.schedule("0 * * * *").onRun(async () => {
   const formatter = Intl.NumberFormat('en', { notation: 'compact' });
 
   const client = new Twitter({
