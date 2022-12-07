@@ -1,7 +1,7 @@
 const { database } = require("firebase-admin");
 class Database {
-  constructor() {
-    this.database = database();
+  constructor(db) {
+    this.database = database(db);
     this.files = [];
   }
 
