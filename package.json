@@ -3,6 +3,7 @@
   "description": "Hourly absurd",
   "scripts": {
     "rename": "node ./functions/util/rename.js",
-    "renameSubmission": "node ./functions/util/renameSubmission.js"
+    "renameSubmission": "node ./functions/util/renameSubmission.js",
+    "uploadVideos": "node ./functions/util/uploadVideos.js"
   }
 }
