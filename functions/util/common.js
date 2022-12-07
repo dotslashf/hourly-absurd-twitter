@@ -17,14 +17,16 @@ const HMAC_PAYLOAD_KEYS = [
 
 async function renameFiles(dir) {
   const files = fs.readdirSync(dir);
+  console.log("renaming files...");
   await Promise.all(
     files.map(async (file) => {
       const extension = extname(file);
       const newName = uuid.v4() + extension;
       fs.renameSync(join(dir, file), join(dir, newName));
-      console.log("renamed file: " + file);
     })
   );
+  console.log("files renamed");
+  return fs.readdirSync(dir);
 }
 
 async function writeToCsv(dir, csvDir) {
@@ -133,6 +135,13 @@ function formatSaweriaBodyToTweet(payload) {
   `;
 }
 
+function getFirstData(files) {
+  const sortedData = Object.entries(files)
+    .sort((a, b) => a[1].createdAt - b[1].createdAt)
+    .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
+  return Object.keys(sortedData)[0];
+}
+
 module.exports = {
   renameFiles,
   writeToCsv,
@@ -143,4 +152,5 @@ module.exports = {
   convertBuffer,
   verifySignature,
   formatSaweriaBodyToTweet,
+  getFirstData,
 };

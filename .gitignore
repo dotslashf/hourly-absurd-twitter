@@ -69,3 +69,4 @@ videos/*
 videos-submission/*
 list.csv
 list-submission.csv
+functions/util/key.json
