@@ -12,9 +12,7 @@ const {
 
 const storage = new Storage("gs://twitter-absurd-humor.appspot.com/");
 const client = new Twitter({});
-const db = new Database(
-  "https://twitter-absurd-humor-default-rtdb.asia-southeast1.firebasedatabase.app/"
-);
+const db = new Database();
 
 const SAWERIA_STREAM_KEY = process.env.SAWERIA_STREAM_KEY;
 

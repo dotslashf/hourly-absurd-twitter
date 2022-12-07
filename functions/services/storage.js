@@ -6,6 +6,8 @@ class Storage {
   constructor(bucket) {
     initializeApp({
       storageBucket: bucket,
+      databaseURL:
+        "https://twitter-absurd-humor-default-rtdb.asia-southeast1.firebasedatabase.app/",
     });
     this.storage = getStorage();
   }
