@@ -4,8 +4,16 @@ const uuid = require("uuid");
 const ObjectsToCsv = require("objects-to-csv");
 const toStream = require("buffer-to-stream");
 const { Readable } = require("stream");
+const crypto = require("crypto");
 
 const SUBMISSION_HOURS = [1, 3, 5, 8, 11, 13];
+const HMAC_PAYLOAD_KEYS = [
+  "version",
+  "id",
+  "amount_raw",
+  "donator_name",
+  "donator_email",
+];
 
 async function renameFiles(dir) {
   const files = fs.readdirSync(dir);
@@ -84,6 +92,47 @@ function convertBuffer(buf, chunkSize) {
   return reader;
 }
 
+function parsePayloadToData(payload) {
+  return HMAC_PAYLOAD_KEYS.map((key) => payload[key]).join("");
+}
+
+function verifySignature(receivedHmac, body, secret) {
+  if (!receivedHmac) return false;
+
+  const hmacData = parsePayloadToData(body);
+
+  const hmac = crypto
+    .createHmac("sha256", secret)
+    .update(hmacData)
+    .digest("hex");
+
+  try {
+    return crypto.timingSafeEqual(Buffer.from(hmac), Buffer.from(receivedHmac));
+  } catch {
+    return false;
+  }
+}
+
+function formatIdrToXAmount(amount) {
+  return "X".repeat(amount.toString().length);
+}
+
+function formatSaweriaBodyToTweet(payload) {
+  const { donator_name, amount_raw, created_at, message } = payload;
+
+  return `
+  💰💸 Submission Alert 💸💰
+
+  "${message}"
+
+  - ${donator_name} (IDR. ${formatIdrToXAmount(amount_raw)})
+  ${new Intl.DateTimeFormat("id-ID", {
+    dateStyle: "full",
+    timeStyle: "short",
+  }).format(new Date(created_at))}
+  `;
+}
+
 module.exports = {
   renameFiles,
   writeToCsv,
@@ -92,4 +141,6 @@ module.exports = {
   updateArrayStatus,
   isItSubmissionTime,
   convertBuffer,
+  verifySignature,
+  formatSaweriaBodyToTweet,
 };
