@@ -3,9 +3,9 @@ const { getStorage } = require("firebase-admin/storage");
 const ObjectsToCsv = require("objects-to-csv");
 
 class Storage {
-  constructor(bucket) {
+  constructor() {
     initializeApp({
-      storageBucket: bucket,
+      storageBucket: "gs://twitter-absurd-humor.appspot.com/",
       databaseURL:
         "https://twitter-absurd-humor-default-rtdb.asia-southeast1.firebasedatabase.app/",
     });

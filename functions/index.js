@@ -3,14 +3,12 @@ const Twitter = require("./services/twitter");
 const Storage = require("./services/storage");
 const Database = require("./services/database");
 const {
-  listToMap,
-  randomize,
-  updateArrayStatus,
   verifySignature,
   formatSaweriaBodyToTweet,
+  getFirstData,
 } = require("./util/common");
 
-const storage = new Storage("gs://twitter-absurd-humor.appspot.com/");
+const storage = new Storage();
 const client = new Twitter({});
 const db = new Database();
 
