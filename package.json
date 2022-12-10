@@ -4,6 +4,11 @@
   "scripts": {
     "rename": "node ./functions/util/rename.js",
     "renameSubmission": "node ./functions/util/renameSubmission.js",
-    "uploadVideos": "node ./functions/util/uploadVideos.js"
+    "uploadVideos": "node ./functions/util/uploadVideos.js",
+    "dashboard": "node ./dashboard.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.3.0",
+    "readline-sync": "^1.4.10"
   }
 }
