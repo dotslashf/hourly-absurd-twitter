@@ -67,6 +67,7 @@ node_modules/
 
 videos/*
 videos-submission/*
+downloaded-videos/*
 list.csv
 list-submission.csv
 functions/util/key.json
