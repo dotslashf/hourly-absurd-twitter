@@ -142,6 +142,15 @@ function getFirstData(files) {
   return Object.keys(sortedData)[0];
 }
 
+function sortByCreatedAt(files, order = "asc") {
+  return Object.entries(files)
+    .sort((a, b) => {
+      if (order === "asc") return a[1].createdAt - b[1].createdAt;
+      return b[1].createdAt - a[1].createdAt;
+    })
+    .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
+}
+
 module.exports = {
   renameFiles,
   writeToCsv,
@@ -153,4 +162,5 @@ module.exports = {
   verifySignature,
   formatSaweriaBodyToTweet,
   getFirstData,
+  sortByCreatedAt,
 };
