@@ -13,7 +13,7 @@ const database = admin.database();
 
 async function getRemainingVideoList() {
   const ref = database.ref("videos");
-  const query = ref.orderByChild("status").equalTo("waiting");
+  const query = ref.orderByChild("status").equalTo("waiting").limitToLast(10);
   const snapshot = await query.once("value");
   return snapshot.val();
 }
@@ -53,9 +53,22 @@ async function dashboardVideos() {
         timeStyle: "medium",
         dateStyle: "long",
       });
-      return { id: data[0], time: timeUpdated };
+      const createdAt = new Date(data[1].createdAt).toLocaleString("en-US", {
+        timeStyle: "medium",
+        dateStyle: "long",
+      });
+      return { id: data[0], createdAt, time: timeUpdated };
     })
-    .reduce((obj, value) => ({ ...obj, [value.id]: { Date: value.time } }), {});
+    .reduce(
+      (obj, value) => ({
+        ...obj,
+        [value.id]: {
+          Created_At: value.createdAt,
+          Will_Updated_At: value.time,
+        },
+      }),
+      {}
+    );
   console.table(table);
 }
 
