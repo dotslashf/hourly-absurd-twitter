@@ -14,7 +14,7 @@ const db = new Database();
 
 const SAWERIA_STREAM_KEY = process.env.SAWERIA_STREAM_KEY;
 
-exports.tweetv2 = functions.pubsub.schedule("0 */4 * * *").onRun(async () => {
+exports.tweetv2 = functions.pubsub.schedule("0 */2 * * *").onRun(async () => {
   const files = await db.getFolderFiles("videos");
   const videosToUpload = getFirstData(files);
 
