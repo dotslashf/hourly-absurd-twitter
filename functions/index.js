@@ -19,6 +19,7 @@ exports.tweetv2 = functions.pubsub.schedule("0 */2 * * *").onRun(async () => {
   const videosToUpload = getFirstData(files);
 
   try {
+    console.log("uploading", videosToUpload);
     const video = await storage.getVideoFile(`videos-v2/${videosToUpload}.mp4`);
     const mediaId = await client.uploadMedia(video.buffer, video.type);
     await client.tweetMedia("", mediaId);
