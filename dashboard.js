@@ -4,6 +4,8 @@ const { sortByCreatedAt } = require("./functions/util/common");
 const prompt = require("readline-sync");
 const fs = require("fs");
 
+const INTERVAL_HOURS = 2;
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL:
@@ -51,7 +53,7 @@ async function dashboardVideos() {
     .map((data, i) => {
       const resetSeconds = new Date(dateUpdated.setSeconds(0));
       const timeToPosted = resetSeconds.setHours(
-        resetSeconds.getHours() + 4 * (i + 1)
+        resetSeconds.getHours() + INTERVAL_HOURS * (i + 1)
       );
       const timeUpdated = new Date(timeToPosted).toLocaleString("en-US", {
         timeStyle: "medium",

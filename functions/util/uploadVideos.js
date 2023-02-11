@@ -35,7 +35,7 @@ const bucket = storage.bucket("gs://twitter-absurd-humor.appspot.com/");
       });
       fs.unlinkSync(`./videos/${file}`);
     } catch (error) {
-      const csv = new ObjectsToCsv([file]);
+      const csv = new ObjectsToCsv([{ file, error }]);
       await csv.toDisk("./listError.csv", { append: true });
     } finally {
       console.log(`${file} uploaded`);

@@ -3,12 +3,25 @@ const { convertBuffer } = require("../util/common");
 require("dotenv").config();
 
 class Twitter {
-  constructor({consumerKey, consumerSecret, accessTokenKey, accessTokenSecret}) {
+  constructor({
+    consumerKey,
+    consumerSecret,
+    accessTokenKey,
+    accessTokenSecret,
+  }) {
     this.client = new twitter({
-      consumer_key: consumerKey ? consumerKey : process.env.TWITTER_CONSUMER_KEY,
-      consumer_secret: consumerSecret ? consumerSecret : process.env.TWITTER_CONSUMER_SECRET,
-      access_token_key: accessTokenKey ? accessTokenKey : process.env.TWITTER_ACCESS_TOKEN,
-      access_token_secret: accessTokenSecret ? accessTokenSecret : process.env.TWITTER_ACCESS_SECRET,
+      consumer_key: consumerKey
+        ? consumerKey
+        : process.env.TWITTER_CONSUMER_KEY,
+      consumer_secret: consumerSecret
+        ? consumerSecret
+        : process.env.TWITTER_CONSUMER_SECRET,
+      access_token_key: accessTokenKey
+        ? accessTokenKey
+        : process.env.TWITTER_ACCESS_TOKEN,
+      access_token_secret: accessTokenSecret
+        ? accessTokenSecret
+        : process.env.TWITTER_ACCESS_SECRET,
     });
     this.chunkNumber = 0;
     this.totalByte = 0;
@@ -104,7 +117,7 @@ class Twitter {
                 if (mediaStatus === "failed") {
                   break;
                 }
-              } 
+              }
             } catch (error) {
               reject(error);
             }
