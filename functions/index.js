@@ -5,7 +5,7 @@ const Database = require("./services/database");
 const {
   verifySignature,
   formatSaweriaBodyToTweet,
-  getFirstData,
+  getVideosName,
 } = require("./util/common");
 
 const storage = new Storage();
@@ -16,18 +16,22 @@ const SAWERIA_STREAM_KEY = process.env.SAWERIA_STREAM_KEY;
 
 exports.tweetv2 = functions.pubsub.schedule("0 */2 * * *").onRun(async () => {
   const files = await db.getFolderFiles("videos");
-  const videosToUpload = getFirstData(files);
+  const listVideosName = getVideosName(files);
+
+  const videosToUpload = await storage.getValidVideo(db, listVideosName);
 
   try {
-    console.log("uploading", videosToUpload);
-    const video = await storage.getVideoFile(`videos-v2/${videosToUpload}.mp4`);
-    const mediaId = await client.uploadMedia(video.buffer, video.type);
+    console.log("uploading", videosToUpload.fileName);
+    const mediaId = await client.uploadMedia(
+      videosToUpload.buffer,
+      videosToUpload.type
+    );
     await client.tweetMedia("", mediaId);
-    console.log(`${videosToUpload} tweeted ✅`);
-    await db.updateStatus(videosToUpload, "finished");
+    console.log(`${videosToUpload.fileName} tweeted ✅`);
+    await db.updateStatus(videosToUpload.fileName, "finished");
   } catch (error) {
     console.log("from catch", error);
-    await db.updateStatus(videosToUpload, `error: ${error}`);
+    await db.updateStatus(videosToUpload.fileName, `error: ${error}`);
   }
 });
 
