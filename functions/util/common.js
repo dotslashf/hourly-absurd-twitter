@@ -135,11 +135,11 @@ function formatSaweriaBodyToTweet(payload) {
   `;
 }
 
-function getFirstData(files) {
+function getVideosName(files) {
   const sortedData = Object.entries(files)
     .sort((a, b) => a[1].createdAt - b[1].createdAt)
     .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
-  return Object.keys(sortedData)[0];
+  return Object.keys(sortedData);
 }
 
 function sortByCreatedAt(files, order = "asc") {
@@ -161,6 +161,6 @@ module.exports = {
   convertBuffer,
   verifySignature,
   formatSaweriaBodyToTweet,
-  getFirstData,
+  getVideosName,
   sortByCreatedAt,
 };

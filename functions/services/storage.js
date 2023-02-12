@@ -1,6 +1,9 @@
 const { initializeApp } = require("firebase-admin/app");
 const { getStorage } = require("firebase-admin/storage");
 const ObjectsToCsv = require("objects-to-csv");
+const ffmpeg = require("fluent-ffmpeg");
+const stream = require("stream");
+const Database = require("./database");
 
 class Storage {
   constructor() {
@@ -28,11 +31,54 @@ class Storage {
   }
 
   async getVideoFile(fileName) {
-    const file = this.storage.bucket().file(`${fileName}`);
+    const file = this.storage.bucket().file(`videos-v2/${fileName}.mp4`);
+    const buffer = (await file.download())[0];
     return {
-      buffer: (await file.download())[0],
+      fileName: fileName,
+      buffer: buffer,
       type: file.metadata.contentType,
+      duration: await this.getVideoDuration(buffer),
     };
+  }
+
+  /**
+   *
+   * @param {string[]} files
+   * @param {number} index
+   * @param {Database} db
+   * @returns {Promise<{fileName: string, buffer: Buffer, type: string, duration: number}>}
+   */
+  async getValidVideo(db, files, index = 0) {
+    const file = files[index];
+    if (file) {
+      const video = await this.getVideoFile(file);
+      if (video.duration <= 140) {
+        return video;
+      } else {
+        db.updateStatus(
+          file,
+          `error: video duration is ${video.duration} seconds`
+        );
+        return this.getValidVideo(db, files, index + 1);
+      }
+    } else {
+      return null;
+    }
+  }
+
+  async getVideoDuration(buffer) {
+    const readable = new stream.PassThrough();
+    readable.end(buffer);
+
+    return new Promise((resolve, reject) => {
+      ffmpeg(readable).ffprobe((err, metadata) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(metadata.format.duration);
+        }
+      });
+    });
   }
 
   /**
