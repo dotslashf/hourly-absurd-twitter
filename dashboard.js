@@ -81,7 +81,7 @@ async function dashboardVideos() {
 async function dashboardHoursLeft() {
   const data = await getRemainingVideoList(100);
   const length = Object.keys(data).length;
-  const hours = length * 4;
+  const hours = length * INTERVAL_HOURS;
   console.log(`🎥 Videos left: ${length}`);
   console.log(`⌚ Days left: ${(hours / 24).toFixed(2)}`);
 }
